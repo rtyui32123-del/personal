@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iM Bank — KYC Document Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1628;--accent:#2e7de0;--al:#5b9ef5;--gold:#e8c96e;--sf:#f5f6f8;--sf2:#eceef2;--bd:#dde0e8;--tx:#0a1628;--mid:#4a5568;--mt:#8896aa;--gn:#1a7f5a;--gnb:#eaf5f0;--am:#92600a;--amb:#fdf3e0;--rd:#c0392b;--rdb:#fdf0ee;--bb:#e8f0fb;--bt:#1a56c4;--pu:#6b3eb5;--pub:#f5f0fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);min-height:100vh}
+.hd{background:var(--navy);height:60px;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:12px}
+.lmk{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.lmk svg{width:18px;height:18px;fill:white}
+.lt{font-size:15px;font-weight:500;color:white}
+.ls{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
+.hdr{display:flex;align-items:center;gap:10px}
+.ulbl{font-size:11px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace}
+.mtog{display:flex;background:rgba(255,255,255,.08);border-radius:6px;padding:3px}
+.mbtn{padding:5px 13px;border:none;background:transparent;color:rgba(255,255,255,.5);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.mbtn.on{background:var(--accent);color:white}
+.lobtn{padding:5px 13px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:rgba(255,255,255,.65);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.lobtn:hover{background:rgba(255,255,255,.18);color:white}
+.lov{display:none;position:fixed;inset:0;background:rgba(8,18,38,.85);z-index:500;align-items:center;justify-content:center}
+.lov.show{display:flex}
+.lbox{background:white;border-radius:16px;padding:2.5rem 2rem;width:360px;max-width:calc(100vw - 2rem);animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.lico{width:48px;height:48px;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+.lico svg{width:22px;height:22px;fill:white}
+.ltit{font-size:17px;font-weight:500;color:var(--navy);text-align:center;margin-bottom:4px}
+.lsb{font-size:12px;color:var(--mt);text-align:center;margin-bottom:1.75rem}
+.lf{margin-bottom:12px}
+.lf label{display:block;font-size:11px;font-weight:500;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.lf input{width:100%;padding:10px 14px;border:1.5px solid var(--bd);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--tx);outline:none;transition:border-color .15s;background:var(--sf)}
+.lf input:focus{border-color:var(--accent);background:white}
+.lerr{display:none;background:var(--rdb);border:1px solid #f5c6c2;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--rd);text-align:center;margin-bottom:12px}
+.lerr.show{display:block}
+.lsbtn{width:100%;padding:11px;background:var(--navy);color:white;border:none;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background .15s;margin-bottom:8px}
+.lsbtn:hover{background:var(--accent)}
+.lcbtn{width:100%;padding:8px;background:transparent;color:var(--mt);border:none;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.lhint{font-size:11px;color:var(--mt);text-align:center;margin-top:10px}
+.view{display:none}.view.on{display:block}
+.atabs{display:flex;gap:2px;border-bottom:1px solid var(--bd);margin-bottom:1.5rem}
+.atab{padding:9px 18px;border:none;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--mt);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .15s}
+.atab.on{color:var(--tx);border-bottom-color:var(--navy)}
+.asec{display:none}.asec.on{display:block}
+.hero{background:var(--navy);padding:3rem 2rem 2.5rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.heroin{max-width:860px;margin:0 auto}
+.hname{font-size:24px;font-weight:300;color:white;margin-bottom:8px}
+.hname strong{font-weight:500;color:var(--gold)}
+.hdesc{font-size:13px;color:rgba(255,255,255,.5);line-height:1.7;max-width:560px;margin-bottom:1.5rem}
+.hmeta{display:flex;gap:2rem;flex-wrap:wrap}
+.hml{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.hmv{font-size:13px;color:rgba(255,255,255,.8);font-family:'DM Mono',monospace}
+.pmain{max-width:860px;margin:0 auto;padding:2rem}
+.fbar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.flbl{font-size:12px;color:var(--mt)}
+.chip{padding:5px 14px;border-radius:20px;border:1px solid var(--bd);background:white;font-size:12px;font-weight:500;color:var(--mid);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:white}
+.dlist{display:flex;flex-direction:column;gap:10px}
+.drow{background:white;border:1px solid var(--bd);border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all .15s;animation:fu .25s ease both}
+.drow:hover{border-color:var(--al);box-shadow:0 2px 12px rgba(46,125,224,.07)}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.dico{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;font-family:'DM Mono',monospace;flex-shrink:0}
+.dico.pdf{background:var(--rdb);color:var(--rd)}.dico.xlsx{background:var(--gnb);color:var(--gn)}
+.dico.docx{background:var(--bb);color:var(--bt)}.dico.misc{background:var(--pub);color:var(--pu)}
+.dinf{flex:1;min-width:0}
+.dname{font-size:14px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dname2{font-size:12px;color:var(--mt);margin-bottom:5px}
+.dtags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+.ta{background:var(--bb);color:var(--bt)}.tl{background:var(--gnb);color:var(--gn)}
+.tf{background:var(--amb);color:var(--am)}.tt{background:#fdf3e0;color:#92600a}.ts{background:var(--pub);color:var(--pu)}
+.drr{text-align:right;flex-shrink:0}
+.ddt{font-size:11px;color:var(--mt);font-family:'DM Mono',monospace;margin-bottom:8px}
+.dsz{font-size:11px;color:var(--mt)}
+.dlbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background .15s}
+.dlbtn:hover{background:var(--accent)}.dlbtn svg{width:13px;height:13px}
+.notice{margin-top:2rem;padding:14px 18px;background:white;border:1px solid var(--bd);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:12px;color:var(--mid);line-height:1.7}
+.notice a{color:var(--accent);text-decoration:none}
+.empty{text-align:center;padding:4rem 2rem;color:var(--mt);font-size:13px}
+.amain{max-width:960px;margin:0 auto;padding:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+.sc{background:white;border:1px solid var(--bd);border-radius:10px;padding:16px 18px}
+.sv{font-size:26px;font-weight:500;color:var(--navy)}.sl{font-size:12px;color:var(--mt);margin-top:3px}
+.stitle{font-size:11px;font-weight:500;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.urlbox{background:var(--navy);border-radius:10px;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;gap:1rem}
+.ullbl{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px}
+.ulval{font-size:14px;font-family:'DM Mono',monospace;color:var(--gold)}
+.cpbtn{padding:7px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:white;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:background .15s}
+.cpbtn:hover{background:rgba(255,255,255,.2)}
+.sbanner{background:var(--gnb);border:1.5px solid var(--gn);border-radius:12px;padding:16px 20px;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:14px;animation:fu .3s ease}
+.sico{width:36px;height:36px;background:var(--gn);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.sico svg{width:18px;height:18px}
+.stit{font-size:14px;font-weight:500;color:#0f5c3a;margin-bottom:4px}
+.snm{font-size:12px;color:var(--gn);margin-bottom:6px}
+.smeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.scls{background:none;border:none;cursor:pointer;color:var(--gn);font-size:20px;line-height:1;padding:0;flex-shrink:0;margin-left:auto}
+.upz{border:2px dashed var(--bd);border-radius:12px;padding:2.5rem;text-align:center;background:white;cursor:pointer;transition:all .2s;margin-bottom:1.5rem;position:relative}
+.upz:hover,.upz.dov{border-color:var(--accent);background:#f0f6ff}
+.upz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uico{font-size:30px;margin-bottom:10px}.ut{font-size:14px;font-weight:500;color:var(--tx);margin-bottom:4px}.us{font-size:12px;color:var(--mt)}
+.prog{height:4px;background:var(--sf2);border-radius:2px;margin-top:12px;overflow:hidden;display:none}
+.prog.show{display:block}
+.progf{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s}
+.mform{background:white;border:1px solid var(--bd);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;display:none}
+.mform.show{display:block}
+.selfn{padding:10px 14px;background:var(--sf);border-radius:6px;font-size:13px;color:var(--mid);font-family:'DM Mono',monospace;margin-bottom:12px;border:1px solid var(--bd)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ff{display:flex;flex-direction:column;gap:5px}
+.ff label{font-size:11px;font-weight:500;color:var(--mid);text-transform:uppercase;letter-spacing:.05em}
+.ff input,.ff select,.ff textarea{padding:8px 12px;border:1px solid var(--bd);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--tx);background:var(--sf);outline:none;transition:border-color .15s;resize:none}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--accent);background:white}
+.fact{display:flex;gap:8px;justify-content:flex-end}
+.btnp{padding:8px 20px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background .15s}
+.btnp:hover{background:var(--accent)}.btnp:disabled{opacity:.5;cursor:not-allowed}
+.btns{padding:8px 20px;background:white;color:var(--mid);border:1px solid var(--bd);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer}
+.btns:hover{background:var(--sf)}
+.btng{padding:8px 20px;background:#1a7f5a;color:white;border:none;border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:background .15s}
+.btng:hover{background:#0f5c3a}.btng:disabled{opacity:.5;cursor:not-allowed}
+.alist{display:flex;flex-direction:column;gap:8px}
+.arow{background:white;border:1px solid var(--bd);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px}
+.arow.nr{border-color:var(--gn);background:#f8fffe}
+.arinfo{flex:1;min-width:0}
+.artop{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.arname{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nbdg{font-size:10px;font-weight:500;background:var(--gnb);color:var(--gn);padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.aren{font-size:11px;color:var(--mt);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.artags{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.arrr{text-align:right;flex-shrink:0;min-width:145px}
+.reglbl{font-size:10px;color:var(--mt);margin-bottom:2px}
+.regdt{font-size:12px;font-family:'DM Mono',monospace;color:var(--mid);margin-bottom:8px;white-space:nowrap}
+.aacts{display:flex;gap:5px;justify-content:flex-end}
+.bdl{padding:5px 11px;background:white;color:var(--mid);border:1px solid var(--bd);border-radius:6px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.bdl:hover{background:var(--sf)}
+.bdel{padding:5px 11px;background:white;color:var(--rd);border:1px solid #f5c6c2;border-radius:6px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.bdel:hover{background:var(--rdb)}
+.db-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.db-card{background:white;border:1px solid var(--bd);border-radius:10px;padding:12px 14px;transition:border-color .3s,background .3s}
+.db-card.updated{border-color:var(--gn)!important;background:#edf9f4!important;animation:dbhl .8s ease}
+@keyframes dbhl{0%{box-shadow:0 0 0 3px rgba(26,127,90,.3)}100%{box-shadow:none}}
+.db-card-lbl{font-size:11px;color:var(--mt);margin-bottom:5px;font-weight:500}
+.db-card-src{font-size:10px;color:var(--mt);margin-top:4px;opacity:.7}
+.db-card input,.db-card textarea{width:100%;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none;resize:none}
+.db-card input:focus,.db-card textarea:focus{border-bottom:1px solid var(--bd)}
+.db-section-hd{font-size:12px;font-weight:500;color:var(--mid);background:var(--sf2);padding:6px 12px;border-radius:6px;margin:1rem 0 .75rem;letter-spacing:.03em}
+.db-update-banner{background:linear-gradient(135deg,#eaf5f0,#f0f6ff);border:1.5px solid var(--gn);border-radius:12px;padding:14px 18px;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:12px;animation:fu .3s ease}
+.db-update-banner .bico{font-size:22px;flex-shrink:0}
+.db-update-banner .btxt{flex:1}
+.db-update-banner .btit{font-size:13px;font-weight:500;color:#0f5c3a;margin-bottom:3px}
+.db-update-banner .bsub{font-size:12px;color:var(--gn);line-height:1.5}
+.db-update-banner .bclose{background:none;border:none;cursor:pointer;color:var(--gn);font-size:18px;line-height:1;padding:0;flex-shrink:0}
+.db-update-progress{background:white;border:1px solid var(--bd);border-radius:10px;padding:14px 18px;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.dot-spin{width:18px;height:18px;border:2px solid var(--bd);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.af-upload{border:2px dashed var(--bd);border-radius:12px;padding:2rem;text-align:center;background:white;cursor:pointer;transition:all .2s;position:relative;margin-bottom:1rem}
+.af-upload:hover,.af-upload.dov{border-color:var(--accent);background:#f0f6ff}
+.af-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.af-result{background:white;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:1rem}
+.af-result-hd{padding:12px 16px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.af-result-title{font-size:13px;font-weight:500;color:var(--tx)}
+.af-table{width:100%;border-collapse:collapse;font-size:13px}
+.af-table th{text-align:left;padding:8px 14px;font-size:11px;font-weight:500;color:var(--mt);border-bottom:1px solid var(--bd);background:var(--sf)}
+.af-table td{padding:10px 14px;border-bottom:1px solid var(--bd);vertical-align:top}
+.af-table tr:last-child td{border-bottom:none}
+.af-table td:first-child{color:var(--mid);width:35%;font-size:12px}
+.af-q{font-size:12px;color:var(--mid)}
+.af-input{width:100%;border:1px solid var(--bd);border-radius:5px;padding:6px 10px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--sf);outline:none;color:var(--tx)}
+.af-input:focus{border-color:var(--accent);background:white}
+.status-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.s-auto{background:var(--gnb);color:var(--gn)}.s-review{background:var(--amb);color:var(--am)}.s-empty{background:var(--rdb);color:var(--rd)}
+.ai-thinking{display:flex;align-items:center;gap:10px;padding:1.5rem;color:var(--mt);font-size:13px}
+.email-box{background:white;border:1px solid var(--bd);border-radius:12px;padding:1.25rem;margin-top:1rem}
+.email-box .ef{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.email-box .ef label{font-size:11px;font-weight:500;color:var(--mid);text-transform:uppercase;letter-spacing:.05em}
+.email-box .ef input{padding:7px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--sf);outline:none;color:var(--tx)}
+.email-box .ef input:focus{border-color:var(--accent);background:white}
+.email-body{padding:10px 12px;border:1px solid var(--bd);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--sf);min-height:160px;white-space:pre-wrap;line-height:1.7;color:var(--tx)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:white;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.fgrid{grid-template-columns:1fr}.hmeta{gap:1rem}.drow{flex-wrap:wrap}.arow{flex-wrap:wrap}.db-grid{grid-template-columns:1fr}.arrr{min-width:auto;text-align:left}}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="logo">
+    <div class="lmk"><svg viewBox="0 0 20 20"><path d="M3 14V8l7-5 7 5v6a1 1 0 01-1 1h-4v-4H8v4H4a1 1 0 01-1-1z"/></svg></div>
+    <div><div class="lt">iM Bank — KYC Document Portal</div><div class="ls">Foreign Currency Funding Division</div></div>
+  </div>
+  <div class="hdr">
+    <span class="ulbl" id="ulbl"></span>
+    <div class="mtog">
+      <button class="mbtn on" id="bpub" onclick="setMode('public')">공개 포털</button>
+      <button class="mbtn" id="badm" onclick="adminClick()">관리자</button>
+    </div>
+    <button class="lobtn" id="lobtn" style="display:none" onclick="doLogout()">로그아웃</button>
+  </div>
+</header>
+
+<div class="lov" id="lov">
+  <div class="lbox">
+    <div class="lico"><svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 00-4 4v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-2V6a4 4 0 00-4-4zm0 2a2 2 0 012 2v3h-4V6a2 2 0 012-2zm0 9a2 2 0 110 4 2 2 0 010-4z"/></svg></div>
+    <div class="ltit">관리자 로그인</div>
+    <div class="lsb">iM Bank KYC Portal — Admin Access Only</div>
+    <div class="lf"><label>아이디</label><input id="lid" type="text" placeholder="아이디 입력" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('lpw').focus()"></div>
+    <div class="lf"><label>비밀번호</label><input id="lpw" type="password" placeholder="비밀번호 입력" autocomplete="off" onkeydown="if(event.key==='Enter')tryLogin()"></div>
+    <div class="lerr" id="lerr">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+    <button class="lsbtn" onclick="tryLogin()">로그인</button>
+    <button class="lcbtn" onclick="closeLogin()">취소</button>
+    <div class="lhint" id="lhint"></div>
+  </div>
+</div>
+
+<div class="view on" id="vpub">
+  <div class="hero">
+    <div class="heroin">
+      <div class="hname">iM Bank Co., Ltd. — <strong>KYC Document Portal</strong></div>
+      <div class="hdesc">This portal provides official KYC / CDD documents of iM Bank for correspondent banking due diligence purposes.</div>
+      <div class="hmeta">
+        <div><div class="hml">SWIFT / BIC</div><div class="hmv" id="pub-swift">PLYBKRSE</div></div>
+        <div><div class="hml">LEI</div><div class="hmv" id="pub-lei">988400GX4DUMMY2025PB</div></div>
+        <div><div class="hml">GIIN (FATCA)</div><div class="hmv" id="pub-giin">9A3B4C.00000.SP.410</div></div>
+        <div><div class="hml">Country</div><div class="hmv">Republic of Korea</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pmain">
+    <div class="fbar">
+      <span class="flbl">Category:</span>
+      <button class="chip on" onclick="pubFilter('all',this)">All</button>
+      <button class="chip" onclick="pubFilter('aml',this)">AML / KYC</button>
+      <button class="chip" onclick="pubFilter('legal',this)">Legal / Corporate</button>
+      <button class="chip" onclick="pubFilter('fin',this)">Financial</button>
+      <button class="chip" onclick="pubFilter('tax',this)">Tax / FATCA</button>
+      <button class="chip" onclick="pubFilter('sig',this)">Signatures</button>
+    </div>
+    <div class="dlist" id="publist"></div>
+    <div class="notice">For KYC inquiries: <a href="/cdn-cgi/l/email-protection#a6c0de88cddfc5e6d6cac7dfc3d4c4c7c8cd8bc2d3cbcbdf88c5c988cdd4"><span class="__cf_email__" data-cfemail="05637d2b6e7c66457569647c607767646b6e28617068687c2b666a2b6e77">[email&#160;protected]</span></a></div>
+  </div>
+</div>
+
+<div class="view" id="vadm">
+  <div class="amain">
+    <div class="urlbox">
+      <div><div class="ullbl">공개 포털 URL — 타행에 이 링크만 보내세요</div><div class="ulval">kyc.imbank.co.kr/documents</div></div>
+      <button class="cpbtn" onclick="copyURL()">링크 복사</button>
+    </div>
+    <div class="stats">
+      <div class="sc"><div class="sv" id="stot">0</div><div class="sl">등록 파일 수</div></div>
+      <div class="sc"><div class="sv" id="saml">0</div><div class="sl">AML / KYC</div></div>
+      <div class="sc"><div class="sv" id="sleg">0</div><div class="sl">법인 서류</div></div>
+      <div class="sc"><div class="sv" id="setc">0</div><div class="sl">재무 / 세무 / 서명</div></div>
+    </div>
+    <div class="atabs">
+      <button class="atab on" onclick="aTab('files')">서류 관리</button>
+      <button class="atab" onclick="aTab('masterdb')">마스터 DB</button>
+      <button class="atab" onclick="aTab('autofill')">KYC 자동 작성</button>
+    </div>
+
+    <div class="asec on" id="as-files">
+      <div class="stitle">파일 등록</div>
+      <div style="background:var(--bb);border:1px solid #c8d8f5;border-radius:10px;padding:12px 16px;margin-bottom:1rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:20px">🔑</div>
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:11px;font-weight:500;color:var(--bt);margin-bottom:4px">Anthropic API Key — 파일 등록 시 마스터 DB 자동 업데이트에 사용됩니다</div>
+          <input id="files-apikey-input" type="password" placeholder="sk-ant-..." style="width:100%;padding:7px 10px;border:1.5px solid #c8d8f5;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace;color:var(--tx);background:white;outline:none" oninput="saveKey(this.value);syncKeys()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#c8d8f5'">
+        </div>
+        <div id="files-apikey-status" style="font-size:12px;white-space:nowrap"></div>
+      </div>
+      <div class="upz" id="upz">
+        <input type="file" id="finput" multiple accept=".pdf,.xlsx,.xls,.docx,.doc,.png,.jpg" onchange="handleSel(this)">
+        <div class="uico">📄</div>
+        <div class="ut">파일을 클릭하거나 드래그해서 업로드</div>
+        <div class="us">PDF, Excel, Word 지원 · 여러 파일 동시 선택 · 대용량 지원</div>
+        <div class="prog" id="prog"><div class="progf" id="progf"></div></div>
+      </div>
+      <div class="mform" id="mform">
+        <div class="selfn" id="selfn">선택된 파일 없음</div>
+        <div class="fgrid">
+          <div class="ff"><label>문서명 (한국어)</label><input id="fkr" type="text"></div>
+          <div class="ff"><label>Document Name (English)</label><input id="fen" type="text"></div>
+          <div class="ff"><label>카테고리</label>
+            <select id="fcat">
+              <option value="aml">AML / KYC</option>
+              <option value="legal">Legal / Corporate</option>
+              <option value="fin">Financial</option>
+              <option value="tax">Tax / FATCA</option>
+              <option value="sig">Authorized Signatures</option>
+            </select>
+          </div>
+          <div class="ff"><label>기준일 / 발급일</label><input id="fdate" type="text"></div>
+          <div class="ff"><label>간단한 설명</label><input id="fdesc" type="text" placeholder="예: 132개 Q&A 전체 답변 완료"></div>
+          <div class="ff"><label>파일 크기</label><input id="fsz" type="text" readonly></div>
+        </div>
+        <div style="background:var(--gnb);border:1px solid #b2d9c8;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="auto-db-chk" checked style="width:16px;height:16px;cursor:pointer;accent-color:var(--gn)">
+          <label for="auto-db-chk" style="font-size:13px;color:#0f5c3a;cursor:pointer;font-weight:500">🤖 등록 완료 시 AI가 파일 내용을 분석하여 마스터 DB 자동 업데이트</label>
+          <span style="font-size:11px;color:var(--gn);white-space:nowrap">(API 키 필요)</span>
+        </div>
+        <div class="fact">
+          <button class="btns" onclick="cancelUp()">취소</button>
+          <button class="btnp" id="regbtn" onclick="regFile()">등록 완료</button>
+        </div>
+      </div>
+      <div id="db-update-status"></div>
+      <div class="stitle">등록된 파일 목록</div>
+      <div id="sucarea"></div>
+      <div id="admlist"></div>
+    </div>
+
+    <div class="asec" id="as-masterdb">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <p style="font-size:13px;color:var(--mt)">당행 KYC 마스터 정보 — 클릭하여 직접 수정하세요. 자동 작성 시 이 값이 사용됩니다.</p>
+        <div style="display:flex;gap:8px">
+          <button class="btns" onclick="resetDB()">초기화</button>
+          <button class="btnp" onclick="saveDB()">변경사항 저장</button>
+        </div>
+      </div>
+      <div id="db-confirm" style="display:none;font-size:12px;color:var(--gn);margin-bottom:10px">✓ 저장되었습니다</div>
+      <div id="db-tab-update-area"></div>
+      <div id="db-fields"></div>
+    </div>
+
+    <div class="asec" id="as-autofill">
+      <p style="font-size:13px;color:var(--mt);margin-bottom:1.25rem">상대 은행이 보내온 KYC 양식(PDF/Excel/Word)을 업로드하면 마스터 DB 기반으로 AI가 자동 작성합니다.</p>
+      <div style="background:white;border:1px solid var(--bd);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:11px;font-weight:500;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Anthropic API Key</div>
+          <input id="apikey-input" type="password" placeholder="sk-ant-..." style="width:100%;padding:8px 12px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;font-family:'DM Mono',monospace;color:var(--tx);background:var(--sf);outline:none;transition:border-color .15s" oninput="saveKey(this.value);syncKeys()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--bd)'">
+        </div>
+        <div style="font-size:11px;color:var(--mt);line-height:1.6;flex-shrink:0;max-width:260px">
+          🔑 API 키는 이 기기에만 저장되며<br>외부로 전송되지 않습니다.<br>
+          <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent);text-decoration:none">console.anthropic.com</a>에서 발급
+        </div>
+        <div id="apikey-status" style="font-size:12px;color:var(--mt)"></div>
+      </div>
+      <div class="af-upload" id="af-upz">
+        <input type="file" id="af-input" accept=".pdf,.xlsx,.xls,.docx,.doc" onchange="handleAF(this)">
+        <div style="font-size:28px;margin-bottom:10px">🤖</div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:4px">상대방 KYC 양식 업로드</div>
+        <div style="font-size:12px;color:var(--mt)">PDF · Excel · Word(.docx/.doc) · 클릭 또는 드래그</div>
+      </div>
+      <div id="af-status"></div>
+      <div id="af-result-area"></div>
+      <div id="af-email-area"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const MK='imbank_meta_v5', SS='imbank_s5', DBK='imbank_masterdb_v6';
+const DB_NAME='imbank_files_v5', DB_STORE='blobs';
+const ADMINS=[{id:'dgb920',pw:'daebkr22!!'}];
+let files=[], pend=[], pidx=0, curF='all', att=0, lockT=0, lastId=null, idb=null;
+
+// ★ Player Bank 5개 파일 기반 마스터 DB
+const DEFAULT_DB=[
+  // ── 기본 식별 정보 ──
+  {sec:'기본 식별 정보', key:'Legal Name (English)',          val:'PLAYER BANK Co., Ltd.',                          src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Country of Incorporation',      val:'Republic of Korea',                              src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Head Office Address',           val:'17, Suseong-ro, Suseong-gu, Daegu, Republic of Korea', src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Entity Type',                   val:'Commercial Bank',                                src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Publicly Listed',               val:'Yes — Korea Exchange (KRX), Ticker: 000690',     src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'SWIFT / BIC Code',              val:'PLYBKRSE',                                       src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'LEI Code',                      val:'988400GX4DUMMY2025PB',                           src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'GIIN (FATCA)',                  val:'9A3B4C.00000.SP.410',                            src:'FATCA GIIN Registration / W-8BEN-E'},
+  {sec:'기본 식별 정보', key:'Year Established',              val:'1967',                                           src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Permanent Residence Address',   val:'17, Suseong-ro, Suseong-gu, Daegu, Republic of Korea', src:'W-8BEN-E 2025'},
+  {sec:'기본 식별 정보', key:'Parent Company',                val:'DGB Financial Group Co., Ltd.',                  src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'기본 식별 정보', key:'Chapter 3 Status (FATCA)',      val:'Corporation',                                    src:'W-8BEN-E 2025'},
+  {sec:'기본 식별 정보', key:'Chapter 4 Status (FATCA)',      val:'Registered Deemed-Compliant FFI',                src:'W-8BEN-E 2025 / FATCA GIIN Registration'},
+  {sec:'기본 식별 정보', key:'Foreign TIN',                   val:'510-81-XXXXX',                                   src:'W-8BEN-E 2025'},
+  // ── 인가 / 규제 ──
+  {sec:'인가 / 규제',   key:'Licensing Authority',           val:'Financial Services Commission (FSC), Republic of Korea', src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'인가 / 규제',   key:'Banking License No.',           val:'■XXXX■ (issued 1967-11-01)',                     src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'인가 / 규제',   key:'Supervisory Authority',         val:'Financial Supervisory Service (FSS)',            src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'인가 / 규제',   key:'FATF Member Country',           val:'Yes — Korea',                                    src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'인가 / 규제',   key:'Egmont Group Member',           val:'Yes — Korea Financial Intelligence Unit (KoFIU)', src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'인가 / 규제',   key:'IGA Status (FATCA)',            val:'Model 1 IGA — Republic of Korea (effective March 6, 2015)', src:'FATCA GIIN Registration'},
+  {sec:'인가 / 규제',   key:'IRS Registration Date',         val:'March 15, 2014',                                 src:'FATCA GIIN Registration'},
+  // ── AML / 컴플라이언스 ──
+  {sec:'AML / 컴플라이언스', key:'Regulatory Framework',          val:'Act on Reporting and Using Specified Financial Transaction Information (ARUSFTI); FATF 40 Recommendations', src:'AML/CFT Policy Summary'},
+  {sec:'AML / 컴플라이언스', key:'AML Policy in Place',           val:'Yes',                                       src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'AML Policy Last Reviewed',      val:'January 15, 2025',                         src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'CDD / EDD Procedures',         val:'Yes — risk-based approach applied',          src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'Sanctions Screening Tool',      val:'Refinitiv World-Check (real-time + daily batch)', src:'Wolfsberg CBDDQ v1.4 / AML Policy'},
+  {sec:'AML / 컴플라이언스', key:'Transaction Monitoring',        val:'Automated rule-based monitoring system; threshold and behavioural analytics', src:'AML/CFT Policy Summary'},
+  {sec:'AML / 컴플라이언스', key:'STR Filing',                   val:'Internal escalation to MLRO within 24 hrs; external filing to KoFIU within statutory deadline', src:'AML/CFT Policy Summary'},
+  {sec:'AML / 컴플라이언스', key:'AML Audit Frequency',          val:'Annually',                                   src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'Last Independent Audit',        val:'September 30, 2024',                        src:'Wolfsberg CBDDQ v1.4 / AML Policy'},
+  {sec:'AML / 컴플라이언스', key:'PEP Screening',                val:'Yes',                                        src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'Adverse Media Screening',      val:'Yes',                                        src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'AML / 컴플라이언스', key:'AML Training',                 val:'Mandatory annual AML/CFT training for all staff; specialist training for compliance and front-line', src:'AML/CFT Policy Summary'},
+  {sec:'AML / 컴플라이언스', key:'MLRO Name',                    val:'Dummy MLRO Name',                            src:'Wolfsberg CBDDQ v1.4 / AML Policy'},
+  // ── 코레스 뱅킹 ──
+  {sec:'코레스 뱅킹',   key:'Nostro Accounts (approx.)',     val:'~40 accounts globally',                          src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'Primary USD Correspondent',     val:'JP Morgan Chase Bank, N.A.',                     src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'Primary EUR Correspondent',     val:'Deutsche Bank AG',                               src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'Primary JPY Correspondent',     val:'MUFG Bank, Ltd.',                                src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'Payment Message Standard',      val:'SWIFT MT / ISO 20022 (MX) ready',                src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'Trade Finance Services',        val:'Yes — LC, BG, Documentary Collection',           src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'CBDDQ Version',                 val:'Wolfsberg CBDDQ v1.4',                           src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'CBDDQ Last Updated',            val:'February 2025',                                  src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'코레스 뱅킹',   key:'CRS Reporting Status',          val:'Active CRS Reporting Financial Institution',     src:'Wolfsberg CBDDQ v1.4'},
+  // ── 지배구조 ──
+  {sec:'지배구조',      key:'Total Board Members',           val:'9 (including 6 independent directors)',          src:'Board of Directors List 2025'},
+  {sec:'지배구조',      key:'Chairman',                      val:'Dummy Chairman Name',                            src:'Board of Directors List 2025'},
+  {sec:'지배구조',      key:'CEO / President',               val:'Dummy CEO Name',                                 src:'Board of Directors List 2025'},
+  {sec:'지배구조',      key:'Chief Compliance Officer',      val:'Dummy CCO Name',                                 src:'AML/CFT Policy Summary'},
+  // ── 담당자 ──
+  {sec:'담당자',        key:'KYC Signatory',                 val:'Dummy Signatory Name — Head of Foreign Currency & Funds Department', src:'Wolfsberg CBDDQ v1.4'},
+  {sec:'담당자',        key:'KYC Contact Email',             val:'fx.kyc@playerbank-dummy.co.kr',                  src:'AML/CFT Policy Summary'},
+  {sec:'담당자',        key:'MLRO',                          val:'Dummy MLRO Name',                                src:'AML/CFT Policy Summary'},
+  {sec:'담당자',        key:'Signatory Date',                val:'February 2025',                                  src:'Wolfsberg CBDDQ v1.4'},
+];
+
+let masterDB=[];
+
+function loadDB(){
+  try{const s=localStorage.getItem(DBK);masterDB=s?JSON.parse(s):[...DEFAULT_DB.map(d=>({...d}))]}
+  catch{masterDB=[...DEFAULT_DB.map(d=>({...d}))]}
+}
+function saveDB(){
+  document.querySelectorAll('[data-dbkey]').forEach(el=>{const idx=parseInt(el.dataset.dbkey);if(masterDB[idx])masterDB[idx].val=el.value;});
+  localStorage.setItem(DBK,JSON.stringify(masterDB));
+  updatePubHeader();
+  const c=document.getElementById('db-confirm');c.style.display='block';setTimeout(()=>c.style.display='none',2500);
+}
+function resetDB(){
+  if(!confirm('마스터 DB를 기본값(Player Bank)으로 초기화하시겠습니까?'))return;
+  masterDB=[...DEFAULT_DB.map(d=>({...d}))];
+  localStorage.removeItem(DBK);
+  renderDB();showToast('초기화되었습니다');
+}
+function updatePubHeader(){
+  const s=masterDB.find(d=>d.key==='SWIFT / BIC Code')?.val||'—';
+  const l=masterDB.find(d=>d.key==='LEI Code')?.val||'—';
+  const g=masterDB.find(d=>d.key==='GIIN (FATCA)')?.val||'—';
+  const se=document.getElementById('pub-swift'),le=document.getElementById('pub-lei'),ge=document.getElementById('pub-giin');
+  if(se)se.textContent=s;if(le)le.textContent=l;if(ge)ge.textContent=g;
+}
+
+function renderDB(){
+  const el=document.getElementById('db-fields');el.innerHTML='';
+  let secName='',grid=null;
+  masterDB.forEach((d,i)=>{
+    if(d.sec!==secName){
+      if(grid)el.appendChild(grid);
+      secName=d.sec;
+      const sh=document.createElement('div');sh.className='db-section-hd';sh.textContent=d.sec;el.appendChild(sh);
+      grid=document.createElement('div');grid.className='db-grid';
+    }
+    const card=document.createElement('div');card.className='db-card';card.id='dbcard-'+i;
+    const lbl=document.createElement('div');lbl.className='db-card-lbl';lbl.textContent=d.key;
+    const isLong=(d.val||'').length>60;let inp;
+    if(isLong){inp=document.createElement('textarea');inp.rows=2;inp.textContent=d.val}
+    else{inp=document.createElement('input');inp.type='text';inp.value=d.val}
+    inp.dataset.dbkey=i;
+    const src=document.createElement('div');src.className='db-card-src';src.textContent='출처: '+(d.src||'');
+    card.appendChild(lbl);card.appendChild(inp);card.appendChild(src);
+    grid.appendChild(card);
+  });
+  if(grid)el.appendChild(grid);
+}
+
+/* ── 서류 등록 → 마스터 DB 자동 업데이트 (API 키 있을 때) ── */
+async function autoUpdateDBFromFile(file,docName){
+  const apiKey=getKey();
+  if(!apiKey||!apiKey.startsWith('sk-ant-'))return;
+  if(!document.getElementById('auto-db-chk')?.checked)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  const isPDF=ext==='pdf';
+  const isWord=['doc','docx'].includes(ext);
+  if(!isPDF&&!isWord)return;
+
+  document.getElementById('db-update-status').innerHTML=`
+    <div class="db-update-progress">
+      <div class="dot-spin"></div>
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px">🤖 AI가 <strong>${docName}</strong> 분석 중 — 마스터 DB 업데이트 준비</div>
+        <div style="font-size:11px;color:var(--mt)">파일에서 KYC 정보를 추출하고 있습니다 (10~30초)</div>
+      </div>
+    </div>`;
+  try{
+    let msgContent;
+    if(isPDF){
+      const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+      msgContent=[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:`이 문서에서 다음 KYC 항목들에 해당하는 값을 추출해주세요.\n추출 대상: ${masterDB.map(d=>d.key).join(', ')}\n\n규칙: JSON 객체만 반환. {"항목명":"추출값",...} 형식. 명확히 확인된 항목만 포함. 빈값/N/A 제외.`}];
+    }else{
+      const text=await extractDocText(file);
+      if(!text||text.trim().length<20){document.getElementById('db-update-status').innerHTML='';return;}
+      msgContent=[{type:'text',text:`문서 내용:\n${text.slice(0,6000)}\n\n다음 KYC 항목들에 해당하는 값을 추출해주세요.\n추출 대상: ${masterDB.map(d=>d.key).join(', ')}\n\n규칙: JSON 객체만 반환. {"항목명":"추출값",...} 형식. 명확히 확인된 항목만 포함. 빈값/N/A 제외.`}];
+    }
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:msgContent}]})});
+    if(!res.ok)throw new Error(`API ${res.status}`);
+    const data=await res.json();
+    const raw=data.content?.find(c=>c.type==='text')?.text||'{}';
+    let extracted={};try{extracted=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch{}
+    const updatedKeys=[];
+    Object.entries(extracted).forEach(([key,val])=>{
+      if(!val||val==='N/A'||val==='')return;
+      let idx=masterDB.findIndex(d=>d.key===key);
+      if(idx===-1)idx=masterDB.findIndex(d=>d.key.toLowerCase().includes(key.toLowerCase())||key.toLowerCase().includes(d.key.toLowerCase()));
+      if(idx!==-1){masterDB[idx].val=val;masterDB[idx].src=docName;updatedKeys.push(masterDB[idx].key);}
+    });
+    if(updatedKeys.length>0){
+      localStorage.setItem(DBK,JSON.stringify(masterDB));renderDB();updatePubHeader();
+      updatedKeys.forEach(key=>{const idx=masterDB.findIndex(d=>d.key===key);const card=document.getElementById('dbcard-'+idx);if(card){card.classList.add('updated');setTimeout(()=>card.classList.remove('updated'),4000);}});
+      const ks=updatedKeys.slice(0,5).join(' · ')+(updatedKeys.length>5?' 외 '+(updatedKeys.length-5)+'개':'');
+      document.getElementById('db-update-status').innerHTML=`<div class="db-update-banner"><div class="bico">✅</div><div class="btxt"><div class="btit">마스터 DB 자동 업데이트 완료 — ${updatedKeys.length}개 항목 갱신</div><div class="bsub">${ks}</div></div><button class="bclose" onclick="document.getElementById('db-update-status').innerHTML=''">×</button></div>`;
+      document.getElementById('db-tab-update-area').innerHTML=`<div class="db-update-banner" style="margin-bottom:1rem"><div class="bico">🔄</div><div class="btxt"><div class="btit">${docName} 등록으로 ${updatedKeys.length}개 항목이 자동 업데이트되었습니다</div><div class="bsub">${ks}</div></div><button class="bclose" onclick="document.getElementById('db-tab-update-area').innerHTML=''">×</button></div>`;
+      showToast(`✓ 마스터 DB ${updatedKeys.length}개 항목 업데이트`);
+    }else{document.getElementById('db-update-status').innerHTML=`<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:var(--mt);display:flex;align-items:center;justify-content:space-between"><span>ℹ️ <strong>${docName}</strong> — 새로 업데이트할 항목이 없습니다</span><button onclick="document.getElementById('db-update-status').innerHTML=''" style="background:none;border:none;cursor:pointer;color:var(--mt);font-size:16px">×</button></div>`;}
+  }catch(e){document.getElementById('db-update-status').innerHTML=`<div style="background:var(--amb);border:1px solid #f5c6a0;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:var(--am);display:flex;align-items:center;justify-content:space-between"><span>⚠️ DB 자동업데이트 오류 (파일은 정상 등록됨): ${e.message}</span><button onclick="document.getElementById('db-update-status').innerHTML=''" style="background:none;border:none;cursor:pointer;color:var(--am);font-size:16px">×</button></div>`;}
+}
+
+/* ── API KEY ── */
+let afAbort=null;
+const AK='imbank_apikey_v5';
+function saveKey(v){localStorage.setItem(AK,v);_updKeyStatus();}
+function loadKey(){return localStorage.getItem(AK)||'';}
+function getKey(){return loadKey();}
+function syncKeys(){const v=loadKey();const a=document.getElementById('apikey-input');const b=document.getElementById('files-apikey-input');if(a&&a.value!==v)a.value=v;if(b&&b.value!==v)b.value=v;_updKeyStatus();}
+function _updKeyStatus(){
+  const v=loadKey();
+  function upd(id,compact){const el=document.getElementById(id);if(!el)return;if(v&&v.startsWith('sk-ant-')&&v.length>20){el.textContent=compact?'✓ 설정됨':'✓ API 키 설정됨';el.style.color='var(--gn)'}else if(v){el.textContent=compact?'⚠ 형식 확인':'⚠ 올바른 키 형식: sk-ant-...';el.style.color='var(--am)'}else{el.textContent=compact?'미입력':'API 키를 입력하세요';el.style.color='var(--mt)'}}
+  upd('apikey-status',false);upd('files-apikey-status',true);
+}
+function initAPIKey(){const k=loadKey();const a=document.getElementById('apikey-input');const b=document.getElementById('files-apikey-input');if(k){if(a)a.value=k;if(b)b.value=k;}; _updKeyStatus();}
+
+function resetAF(){if(afAbort){afAbort.abort();afAbort=null;}document.getElementById('af-input').value='';document.getElementById('af-status').innerHTML='';document.getElementById('af-result-area').innerHTML='';document.getElementById('af-email-area').innerHTML='';document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';}
+
+async function extractDocText(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='docx'){try{const mammoth=await import('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.esm.js');const ab=await file.arrayBuffer();const result=await mammoth.extractRawText({arrayBuffer:ab});return result.value||'';}catch(e){return '';}}
+  if(ext==='doc'){try{const ab=await file.arrayBuffer();const bytes=new Uint8Array(ab);let text='',run='';for(let i=0;i<bytes.length;i++){const c=bytes[i];if(c>=32&&c<127){run+=String.fromCharCode(c);}else{if(run.length>4)text+=run+' ';run='';}}if(run.length>4)text+=run;return text.split(/\s{3,}/).map(s=>s.trim()).filter(s=>s.length>8).join('\n').slice(0,8000);}catch(e){return '';}}
+  return '';
+}
+
+function handleAF(inp){
+  if(!inp.files[0])return;
+  const file=inp.files[0];const ext=file.name.split('.').pop().toLowerCase();
+  document.getElementById('af-upz').style.opacity='.4';document.getElementById('af-upz').style.pointerEvents='none';
+  document.getElementById('af-result-area').innerHTML='';document.getElementById('af-email-area').innerHTML='';
+  document.getElementById('af-status').innerHTML=`<div style="background:white;border:1px solid var(--bd);border-radius:10px;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div class="ai-thinking" style="padding:0"><div class="dot-spin"></div><div><div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:3px">AI가 양식을 분석하는 중...</div><div style="font-size:11px;color:var(--mt)" id="af-progress-msg">파일을 읽고 마스터 DB와 매핑하고 있습니다 (보통 15~30초)</div></div></div><button onclick="resetAF()" style="padding:7px 16px;background:var(--rdb);color:var(--rd);border:1px solid #f5c6c2;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0">✕ 중지</button></div>`;
+  const isPDF=(ext==='pdf');const isWord=['doc','docx'].includes(ext);
+  const dbText=masterDB.map(d=>`${d.key}: ${d.val}`).join('\n');
+  afAbort=new AbortController();
+  const timer=setTimeout(()=>{if(afAbort){afAbort.abort();afAbort=null;}document.getElementById('af-status').innerHTML=`<div style="background:var(--rdb);border:1px solid #f5c6c2;border-radius:10px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div style="font-size:13px;font-weight:500;color:var(--rd)">⏱ 응답 시간 초과</div><button onclick="resetAF()" style="padding:7px 16px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer">다시 업로드</button></div>`;document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';},45000);
+  async function proceed(msgContent){
+    const apiKey=getKey();
+    if(!apiKey||!apiKey.startsWith('sk-ant-')){clearTimeout(timer);document.getElementById('af-status').innerHTML=`<div style="background:var(--amb);border:1px solid #f5c6a0;border-radius:10px;padding:1rem 1.5rem;font-size:13px;color:var(--am)">⚠️ API 키가 없거나 올바르지 않습니다.</div>`;document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';return;}
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:afAbort.signal,headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,system:`당신은 iM Bank 외화자금부 KYC 전문가입니다. 상대방 KYC 양식을 분석하고 아래 마스터 DB로 자동 작성합니다.\n\niM Bank 마스터 DB:\n${dbText}\n\n규칙:\n1. JSON 배열만 반환.\n2. [{"question":"질문","answer":"답변","status":"auto|review|empty","note":""}]\n3. auto=DB에서 명확히 찾음, review=유사값 확인필요, empty=DB에 없음\n4. 최대 30개 항목`,messages:[{role:'user',content:msgContent}]})});
+      clearTimeout(timer);if(!res.ok)throw new Error(`API 오류 ${res.status}`);
+      const data=await res.json();const raw=data.content?.find(c=>c.type==='text')?.text||'[]';
+      let items=[];try{items=JSON.parse(raw.replace(/```json|```/g,'').trim())}catch{items=[{question:'파싱 오류',answer:'다시 시도해주세요.',status:'empty',note:''}]}
+      afAbort=null;window._afLastUploadedFile=file;renderAFResult(items,file.name);document.getElementById('af-status').innerHTML='';document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';
+    }catch(err){clearTimeout(timer);if(err.name==='AbortError')return;document.getElementById('af-status').innerHTML=`<div style="background:var(--rdb);border:1px solid #f5c6c2;border-radius:10px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div><div style="font-size:13px;font-weight:500;color:var(--rd)">⚠️ 오류</div><div style="font-size:12px;color:var(--rd)">${err.message}</div></div><button onclick="resetAF()" style="padding:7px 16px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer">다시 업로드</button></div>`;document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';afAbort=null;}
+  }
+  if(isPDF){const reader=new FileReader();reader.onload=async e=>{const b64=e.target.result.split(',')[1];await proceed([{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'이 KYC 양식의 모든 질문 항목을 추출하고 마스터 DB 기반으로 자동 작성해주세요.'}]);};reader.readAsDataURL(file);}
+  else if(isWord){document.getElementById('af-progress-msg').textContent='Word 파일에서 텍스트 추출 중...';extractDocText(file).then(async text=>{document.getElementById('af-progress-msg').textContent='Claude API에 분석 요청 중...';await proceed([{type:'text',text:text&&text.trim().length>30?`KYC 양식(${file.name}):\n\n${text}\n\n모든 질문 항목을 추출하고 마스터 DB 기반으로 자동 작성해주세요.`:`KYC 양식 파일명: ${file.name}\n\n일반적인 은행 KYC 구조를 바탕으로 마스터 DB 기반으로 작성해주세요.`}]);});}
+  else{proceed([{type:'text',text:`KYC 양식 파일명: ${file.name}\n\n일반적인 은행 KYC 질문서 항목을 마스터 DB 기반으로 작성해주세요.`}]);}
+}
+
+function renderAFResult(items,fname){
+  const auto=items.filter(i=>i.status==='auto').length;const review=items.filter(i=>i.status==='review').length;const empty=items.filter(i=>i.status==='empty').length;
+  const isDocx=fname.toLowerCase().endsWith('.docx')||fname.toLowerCase().endsWith('.doc');
+  document.getElementById('af-result-area').innerHTML=`<div class="af-result"><div class="af-result-hd"><div><div class="af-result-title">${fname} — 자동 작성 결과</div><div style="font-size:11px;color:var(--mt);margin-top:3px">총 ${items.length}개 &nbsp;·&nbsp; <span style="color:var(--gn)">자동매핑 ${auto}개</span> &nbsp;·&nbsp; <span style="color:var(--am)">확인필요 ${review}개</span> &nbsp;·&nbsp; <span style="color:var(--rd)">미입력 ${empty}개</span></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="resetAF()" style="padding:7px 14px;background:white;color:var(--mid);border:1px solid var(--bd);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">↑ 다시 업로드</button>${isDocx?`<button class="btnp" onclick="downloadFilledDocx()" style="font-size:12px;padding:7px 14px">📄 Word 파일로 다운로드</button>`:''}<button class="btng" onclick="genEmail()">이메일 초안 생성</button></div></div><table class="af-table"><thead><tr><th style="width:35%">질문 항목</th><th style="width:40%">작성 내용</th><th>상태</th></tr></thead><tbody>${items.map((it,i)=>{const chip=it.status==='auto'?'<span class="status-chip s-auto">자동매핑</span>':it.status==='review'?'<span class="status-chip s-review">확인필요</span>':'<span class="status-chip s-empty">미입력</span>';return`<tr><td><div class="af-q">${it.question}</div>${it.note?`<div style="font-size:10px;color:var(--mt);margin-top:3px">${it.note}</div>`:''}</td><td><input class="af-input" id="af-ans-${i}" value="${(it.answer||'').replace(/"/g,'&quot;')}" placeholder="직접 입력..."></td><td>${chip}</td></tr>`;}).join('')}</tbody></table></div>`;
+  window._afItems=items;window._afOrigFile=window._afLastUploadedFile||null;
+}
+
+async function genEmail(){
+  const rows=window._afItems||[];const answers=rows.map((it,i)=>{const el=document.getElementById('af-ans-'+i);return{q:it.question,a:el?el.value:it.answer};}).filter(x=>x.a);
+  const filled=answers.map(x=>`- ${x.q}: ${x.a}`).join('\n');
+  const dbEmail=masterDB.find(d=>d.key==='KYC Contact Email')?.val||'fx.kyc@playerbank-dummy.co.kr';
+  const dbSignatory=masterDB.find(d=>d.key==='KYC Signatory')?.val||'';
+  document.getElementById('af-email-area').innerHTML=`<div style="padding:1rem;color:var(--mt);font-size:13px;display:flex;align-items:center;gap:8px"><div class="dot-spin"></div> 이메일 초안 생성 중...</div>`;
+  try{
+    const apiKey=getKey();const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`당신은 iM Bank 외화자금부 담당자입니다.\n\nKYC 항목:\n${filled}\n\n작성자: ${dbSignatory}, Foreign Currency Funding Division, iM Bank, ${dbEmail}\n\n요구사항: Subject: 로 시작하는 제목, 전문적인 영문 이메일, Subject: 이후 바로 본문.`}]})});
+    const data=await res.json();const text=data.content?.find(c=>c.type==='text')?.text||'';const lines=text.split('\n');const subjLine=lines.find(l=>l.startsWith('Subject:'));const subj=subjLine?subjLine.replace('Subject:','').trim():'KYC Documentation — iM Bank Co., Ltd.';const body=lines.filter(l=>!l.startsWith('Subject:')).join('\n').trim();
+    document.getElementById('af-email-area').innerHTML=`<div class="email-box"><div style="font-size:13px;font-weight:500;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between"><span>발송 이메일 초안</span><button class="btns" onclick="copyEmail()" style="font-size:12px;padding:5px 12px">클립보드 복사</button></div><div class="ef"><label>제목 (Subject)</label><input id="email-subj" value="${subj.replace(/"/g,'&quot;')}"></div><div class="ef" style="margin-top:0"><label>본문</label></div><div class="email-body" id="email-body" contenteditable="true">${body}</div><div id="copy-ok" style="display:none;font-size:12px;color:var(--gn);margin-top:8px">✓ 복사되었습니다</div></div>`;
+  }catch(e){document.getElementById('af-email-area').innerHTML=`<div style="padding:1rem;color:var(--rd);font-size:13px">⚠️ 이메일 생성 오류</div>`;}
+}
+async function downloadFilledDocx(){
+  const items=window._afItems||[];
+  const origFile=window._afOrigFile;
+  if(!origFile){showToast('원본 파일을 찾을 수 없습니다');return;}
+
+  // JSZip CDN 로드
+  if(!window.JSZip){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload=res;s.onerror=rej;document.head.appendChild(s);
+    });
+  }
+
+  showToast('📄 Word 파일 생성 중...');
+
+  try{
+    // 현재 편집된 답변 수집
+    const answers={};
+    items.forEach((it,i)=>{
+      const el=document.getElementById('af-ans-'+i);
+      const val=el?el.value.trim():(it.answer||'');
+      answers[it.question]=val;
+    });
+
+    const ab=await origFile.arrayBuffer();
+    const zip=await window.JSZip.loadAsync(ab);
+    let xml=await zip.file('word/document.xml').async('string');
+
+    // XML 파싱
+    const parser=new DOMParser();
+    const xmlDoc=parser.parseFromString(xml,'application/xml');
+    const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+
+    const allParas=Array.from(xmlDoc.getElementsByTagNameNS(W,'p'));
+
+    // 각 단락의 텍스트 추출
+    function getParaText(p){
+      return Array.from(p.getElementsByTagNameNS(W,'t')).map(t=>t.textContent||'').join('').trim();
+    }
+
+    // 답변 삽입: 질문이 있는 단락 다음 빈 단락에 답 삽입
+    let insertCount=0;
+    for(let i=0;i<allParas.length;i++){
+      const paraText=getParaText(allParas[i]);
+      if(!paraText) continue;
+
+      // 이 단락이 어떤 질문과 매칭되는지 확인
+      for(const [question,answer] of Object.entries(answers)){
+        if(!answer) continue;
+        const qWords=question.toLowerCase().replace(/[^a-z0-9 ]/g,' ').trim().split(' ').filter(w=>w.length>3).slice(0,4);
+        const pLower=paraText.toLowerCase();
+        const matchCount=qWords.filter(w=>pLower.includes(w)).length;
+
+        if(matchCount>=Math.min(2,qWords.length) && paraText.length<200){
+          // 이 단락이 질문 단락 → 다음 비어있는 단락에 답 삽입
+          // 또는 콜론으로 끝나면 같은 단락에 삽입
+          if(paraText.match(/:\s*$/) || paraText.endsWith(':')){
+            // 같은 단락 마지막 run에 답 추가
+            const runs=Array.from(allParas[i].getElementsByTagNameNS(W,'r'));
+            if(runs.length>0){
+              const lastT=runs[runs.length-1].getElementsByTagNameNS(W,'t');
+              if(lastT.length>0){
+                const last=lastT[lastT.length-1];
+                if(!last.textContent.includes(answer)){
+                  last.textContent=last.textContent+' '+answer;
+                  last.setAttribute('xml:space','preserve');
+                  insertCount++;
+                }
+              }
+            }
+          } else if(i+1<allParas.length){
+            // 다음 단락이 비어있으면 답 삽입
+            const nextText=getParaText(allParas[i+1]);
+            if(!nextText || nextText.length<5){
+              // 다음 단락에 새 run 추가
+              const newRun=xmlDoc.createElementNS(W,'r');
+              const newT=xmlDoc.createElementNS(W,'t');
+              newT.textContent=answer;
+              newT.setAttribute('xml:space','preserve');
+              newRun.appendChild(newT);
+              allParas[i+1].appendChild(newRun);
+              insertCount++;
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    console.log('삽입된 답변 수:', insertCount);
+
+    // 수정된 XML 저장
+    const serializer=new XMLSerializer();
+    const newXml=serializer.serializeToString(xmlDoc);
+    zip.file('word/document.xml',newXml);
+
+    const blob=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const baseName=origFile.name.replace(/\.[^.]+$/,'');
+    a.href=url;
+    a.download=baseName+'_자동작성완료.docx';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    showToast('✓ Word 파일 다운로드! (삽입: '+insertCount+'개 항목)');
+  }catch(e){
+    console.error(e);
+    showToast('⚠️ Word 생성 오류 — 텍스트로 다운로드합니다');
+    downloadFilledTxt();
+  }
+}
+
+function downloadFilledTxt(){
+  const items=window._afItems||[];
+  const origFile=window._afOrigFile;
+  const fname=origFile?origFile.name.replace(/\.[^.]+$/,''):'KYC_자동작성';
+  let txt='KYC 자동 작성 결과\n';
+  txt+='생성일시: '+new Date().toLocaleString('ko-KR')+'\n';
+  txt+='='.repeat(60)+'\n\n';
+  items.forEach((it,i)=>{
+    const el=document.getElementById('af-ans-'+i);
+    const val=el?el.value.trim():it.answer;
+    const status=it.status==='auto'?'[자동]':it.status==='review'?'[확인]':'[미입력]';
+    txt+=status+' '+it.question+'\n';
+    txt+='  → '+(val||'(미입력)')+'\n\n';
+  });
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=fname+'_자동작성완료.txt';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  showToast('✓ 텍스트 파일 다운로드 완료');
+}
+
+function copyEmail(){const subj=document.getElementById('email-subj')?.value||'';const body=document.getElementById('email-body')?.innerText||'';navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body).then(()=>{const ok=document.getElementById('copy-ok');if(ok){ok.style.display='block';setTimeout(()=>ok.style.display='none',2500)}});}
+
+/* ── IndexedDB ── */
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=e=>e.target.result.createObjectStore(DB_STORE,{keyPath:'id'});r.onsuccess=e=>{idb=e.target.result;res()};r.onerror=e=>rej(e);});}
+function dbPut(id,blob){return new Promise((res,rej)=>{const tx=idb.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put({id,blob});tx.oncomplete=res;tx.onerror=rej})}
+function dbGet(id){return new Promise((res,rej)=>{const tx=idb.transaction(DB_STORE,'readonly');const r=tx.objectStore(DB_STORE).get(id);r.onsuccess=e=>res(e.target.result?.blob||null);r.onerror=rej})}
+function dbDel(id){return new Promise((res,rej)=>{const tx=idb.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).delete(id);tx.oncomplete=res;tx.onerror=rej})}
+
+/* ── Meta / Auth ── */
+function saveMeta(){localStorage.setItem(MK,JSON.stringify(files.map(f=>({id:f.id,fn:f.fn,kr:f.kr,en:f.en,cat:f.cat,dt:f.dt,desc:f.desc,sz:f.sz,at:f.at}))))}
+function loadMeta(){try{files=JSON.parse(localStorage.getItem(MK)||'[]')}catch{files=[]}}
+function htok(s){let h=0;for(let i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;return h.toString(36)}
+function isAuth(){try{const d=JSON.parse(sessionStorage.getItem(SS)||'{}');return d.t===htok('ok')&&Date.now()<d.e}catch{return false}}
+function setAuth(){sessionStorage.setItem(SS,JSON.stringify({t:htok('ok'),e:Date.now()+4*3600*1000}))}
+function clrAuth(){sessionStorage.removeItem(SS)}
+function adminClick(){if(isAuth())setMode('admin');else openLogin()}
+function openLogin(){document.getElementById('lid').value='';document.getElementById('lpw').value='';document.getElementById('lerr').classList.remove('show');document.getElementById('lhint').textContent='';document.getElementById('lov').classList.add('show');setTimeout(()=>document.getElementById('lid').focus(),60)}
+function closeLogin(){document.getElementById('lov').classList.remove('show')}
+function tryLogin(){
+  if(Date.now()<lockT){document.getElementById('lhint').textContent='⏳ '+Math.ceil((lockT-Date.now())/1000)+'초 후 재시도';return}
+  const id=document.getElementById('lid').value.trim(),pw=document.getElementById('lpw').value;
+  if(ADMINS.find(a=>a.id===id&&a.pw===pw)){att=0;setAuth();closeLogin();updUI();setMode('admin');showToast('✓ 관리자로 로그인되었습니다')}
+  else{att++;document.getElementById('lerr').classList.add('show');document.getElementById('lpw').value='';if(att>=5){lockT=Date.now()+30000;att=0;document.getElementById('lhint').textContent='⛔ 5회 실패 — 30초 잠금'}else document.getElementById('lhint').textContent='실패 '+att+'/5회'}
+}
+function doLogout(){clrAuth();updUI();setMode('public');showToast('로그아웃되었습니다')}
+function updUI(){const ok=isAuth();document.getElementById('lobtn').style.display=ok?'inline-block':'none';document.getElementById('badm').textContent=ok?'관리자 ✓':'관리자'}
+function setMode(m){if(m==='admin'&&!isAuth()){openLogin();return}document.getElementById('bpub').classList.toggle('on',m==='public');document.getElementById('badm').classList.toggle('on',m==='admin');document.getElementById('vpub').classList.toggle('on',m==='public');document.getElementById('vadm').classList.toggle('on',m==='admin')}
+function aTab(t){document.querySelectorAll('.atab').forEach((b,i)=>b.classList.toggle('on',['files','masterdb','autofill'][i]===t));document.querySelectorAll('.asec').forEach((s,i)=>s.classList.toggle('on',['as-files','as-masterdb','as-autofill'][i]==='as-'+t));}
+
+/* ── Helpers ── */
+function ci(c){return{aml:['AML / KYC','ta'],legal:['Legal','tl'],fin:['Financial','tf'],tax:['Tax / FATCA','tt'],sig:['Signatures','ts']}[c]||['기타','ta']}
+function ec(n){const e=(n||'').split('.').pop().toLowerCase();if(e==='pdf')return{c:'pdf',l:'PDF'};if(['xlsx','xls'].includes(e))return{c:'xlsx',l:'XLS'};if(['docx','doc'].includes(e))return{c:'docx',l:'DOC'};return{c:'misc',l:e.toUpperCase().slice(0,4)}}
+function fdt(iso){if(!iso)return'';const d=new Date(iso);return d.toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\.\s/g,'.').replace(/\.$/,'')+' '+d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}
+function fSz(b){if(b<1024)return b+' B';if(b<1024*1024)return(b/1024).toFixed(0)+' KB';return(b/(1024*1024)).toFixed(1)+' MB'}
+
+function renderPub(){
+  const el=document.getElementById('publist');const data=curF==='all'?files:files.filter(f=>f.cat===curF);
+  if(!data.length){el.innerHTML='<div class="empty">등록된 문서가 없습니다.</div>';return}
+  el.innerHTML=data.map((f,i)=>{const[tl,tc]=ci(f.cat);const x=ec(f.fn);return`<div class="drow" style="animation-delay:${i*.04}s"><div class="dico ${x.c}">${x.l}</div><div class="dinf"><div class="dname">${f.kr||f.fn}</div><div class="dname2">${f.en||''}</div><div class="dtags"><span class="tag ${tc}">${tl}</span>${f.desc?`<span style="font-size:11px;color:var(--mt)">${f.desc}</span>`:''}</div></div><div class="drr"><div class="ddt">${f.dt||''}</div><div class="dsz">${f.sz||''}</div></div><button class="dlbtn" onclick="dlFile('${f.id}',this)"><svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v8M5 7l3 4 3-4M2 14h12"/></svg>Download</button></div>`;}).join('');
+  if(files.length){const la=files.reduce((a,b)=>new Date(a.at)>new Date(b.at)?a:b);document.getElementById('ulbl').textContent='Updated '+new Date(la.at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
+}
+function renderAdm(){
+  const el=document.getElementById('admlist');
+  const CATS=[{id:'aml',label:'AML / KYC',icon:'🔍'},{id:'legal',label:'Legal / Corporate (법인 서류)',icon:'🏛'},{id:'fin',label:'Financial (재무제표)',icon:'📊'},{id:'tax',label:'Tax / FATCA (세무)',icon:'📋'},{id:'sig',label:'Authorized Signatures (서명)',icon:'✍️'}];
+  let html='';
+  CATS.forEach(cat=>{
+    const catFiles=files.filter(f=>f.cat===cat.id);
+    html+=`<div style="margin-bottom:1.5rem"><div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--sf2);border-radius:8px;border-left:3px solid var(--accent);margin-bottom:8px"><span style="font-size:15px">${cat.icon}</span><span style="font-size:13px;font-weight:500;color:var(--navy)">${cat.label}</span><span style="font-size:11px;color:var(--mt);background:white;padding:2px 8px;border-radius:10px;border:1px solid var(--bd)">${catFiles.length}개</span></div><div class="alist">`;
+    if(!catFiles.length){html+=`<div style="padding:.75rem 1rem;background:white;border:1px dashed var(--bd);border-radius:8px;font-size:12px;color:var(--mt);text-align:center">등록된 파일이 없습니다</div>`;}
+    else{html+=catFiles.map(f=>{const x=ec(f.fn);const isN=f.id===lastId;return`<div class="arow${isN?' nr':''}" id="row${f.id}"><div class="dico ${x.c}" style="width:40px;height:40px;font-size:11px;flex-shrink:0">${x.l}</div><div class="arinfo"><div class="artop"><div class="arname">${f.kr||f.fn}</div>${isN?'<span class="nbdg">NEW</span>':''}</div><div class="aren">${f.en||''}</div><div class="artags">${f.dt?`<span style="font-size:11px;color:var(--mt);font-family:'DM Mono',monospace">기준일: ${f.dt}</span>`:''}${f.sz?`<span style="font-size:11px;color:var(--mt);font-family:'DM Mono',monospace">${f.sz}</span>`:''}</div></div><div class="arrr"><div class="reglbl">등록일시</div><div class="regdt">${fdt(f.at)}</div><div class="aacts"><button class="bdl" onclick="dlFile('${f.id}',this)">다운로드</button><button class="bdel" onclick="delFile('${f.id}')">삭제</button></div></div></div>`;}).join('');}
+    html+=`</div></div>`;
+  });
+  el.innerHTML=html;
+  document.getElementById('stot').textContent=files.length;document.getElementById('saml').textContent=files.filter(f=>f.cat==='aml').length;document.getElementById('sleg').textContent=files.filter(f=>f.cat==='legal').length;document.getElementById('setc').textContent=files.filter(f=>['fin','tax','sig'].includes(f.cat)).length;
+}
+function showBanner(f,cnt){
+  const[tl,tc]=ci(f.cat);
+  document.getElementById('sucarea').innerHTML=`<div class="sbanner" id="sucb"><div class="sico"><svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 10l3.5 3.5L15 7"/></svg></div><div style="flex:1"><div class="stit">${cnt>1?cnt+'개 파일 등록 완료':'파일이 성공적으로 등록되었습니다'}</div><div class="snm">${f.kr||f.fn}</div><div class="smeta"><span class="tag ${tc}" style="font-size:11px">${tl}</span>${f.dt?`<span style="font-size:11px;color:#3b6d11;font-family:'DM Mono',monospace">기준일: ${f.dt}</span>`:''}<span style="font-size:11px;color:#3b6d11;font-family:'DM Mono',monospace">등록: ${fdt(f.at)}</span></div></div><button class="scls" onclick="document.getElementById('sucarea').innerHTML=''">×</button></div>`;
+  setTimeout(()=>{const b=document.getElementById('sucb');if(b)b.remove()},9000);
+  const row=document.getElementById('row'+f.id);if(row)setTimeout(()=>row.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+function renderAll(){renderPub();renderAdm()}
+function pubFilter(cat,btn){curF=cat;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderPub()}
+
+function handleSel(inp){if(!inp.files.length)return;pend=Array.from(inp.files);pidx=0;showMeta(pend[0])}
+function showMeta(f){
+  document.getElementById('mform').classList.add('show');
+  document.getElementById('selfn').textContent=f.name+(pend.length>1?` (${pidx+1}/${pend.length}개 중)`:'');
+  document.getElementById('fkr').value=aKr(f.name);document.getElementById('fen').value=aEn(f.name);document.getElementById('fcat').value=aCat(f.name);
+  document.getElementById('fdate').value=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit'}).replace(/\.\s/g,'.').replace(/\.$/,'');
+  document.getElementById('fsz').value=fSz(f.size);document.getElementById('fdesc').value='';
+  document.getElementById('regbtn').textContent='등록 완료';document.getElementById('regbtn').disabled=false;
+  document.getElementById('upz').style.opacity='.5';document.getElementById('upz').style.pointerEvents='none';
+}
+function aKr(n){const m={'Wolfsberg':'Wolfsberg CBDDQ V1.4','AML_Questionnaire':'AML Questionnaire','AML_Policy':'AML Policy','AML_CFT':'AML/CFT Policy Summary','US_Patriot':'US Patriot Act Certification','UBO':'UBO Declaration','Board':'이사회 구성원 목록','W-8BEN':'W-8BEN-E (FATCA)','FATCA_GIIN':'FATCA GIIN 등록 확인서','FATCA_W8':'W-8BEN-E (FATCA)','Authorized_Signatures':'서명권자 목록','SHAREHOLDING':'주주현황','Consolidated':'연결재무제표','Separate':'별도재무제표'};for(const[k,v]of Object.entries(m))if(n.includes(k))return v;return n.replace(/\.[^.]+$/,'').replace(/[_\-]+/g,' ').trim()}
+function aEn(n){const m={'Wolfsberg':'Wolfsberg Group Correspondent Banking DDQ V1.4','AML_Questionnaire':'Anti-Money Laundering Questionnaire','AML_Policy':'AML/CFT Policy Summary','AML_CFT':'AML/CFT Policy Summary','US_Patriot':'Certification Regarding Correspondent Accounts (PATRIOT Act)','UBO':'Ultimate Beneficial Owner Declaration','Board':'Board of Directors List','W-8BEN':'W-8BEN-E — Certificate of Status of Beneficial Owner','FATCA_GIIN':'FATCA GIIN Registration Certificate','FATCA_W8':'W-8BEN-E (FATCA)','Authorized_Signatures':'Authorized Signatures Booklet','Consolidated':'Consolidated Financial Statements','Separate':'Separate Financial Statements'};for(const[k,v]of Object.entries(m))if(n.includes(k))return v;return n.replace(/\.[^.]+$/,'').replace(/[_\-]+/g,' ').trim()}
+function aCat(n){if(/Wolfsberg|AML|Patriot|UBO/i.test(n))return'aml';if(/Board|Director|사업자|등기|SHAREHOLDING|주주/i.test(n))return'legal';if(/W-8BEN|FATCA|GIIN/i.test(n))return'tax';if(/Signature|서명권자/i.test(n))return'sig';if(/Financial|재무|Consolidated|Separate/i.test(n))return'fin';return'aml'}
+
+function regFile(){
+  const file=pend[pidx];const docName=document.getElementById('fkr').value.trim()||file.name;
+  const bar=document.getElementById('prog'),fill=document.getElementById('progf');
+  bar.classList.add('show');fill.style.width='5%';
+  document.getElementById('regbtn').textContent='저장 중...';document.getElementById('regbtn').disabled=true;
+  const entry={id:'f'+Date.now()+Math.random().toString(36).slice(2,5),fn:file.name,kr:docName,en:document.getElementById('fen').value.trim(),cat:document.getElementById('fcat').value,dt:document.getElementById('fdate').value.trim(),desc:document.getElementById('fdesc').value.trim(),sz:fSz(file.size),at:new Date().toISOString()};
+  fill.style.width='30%';
+  dbPut(entry.id,file).then(()=>{
+    fill.style.width='100%';files.unshift(entry);saveMeta();lastId=entry.id;
+    setTimeout(()=>{
+      bar.classList.remove('show');fill.style.width='0%';pidx++;
+      if(pidx<pend.length){document.getElementById('regbtn').textContent='등록 완료';document.getElementById('regbtn').disabled=false;showMeta(pend[pidx]);}
+      else{const tot=pidx;cancelUp();renderAll();showBanner(entry,tot);showToast('✓ 등록 완료!');setTimeout(()=>{lastId=null;renderAdm();},5000);autoUpdateDBFromFile(file,docName);}
+    },300);
+  }).catch(()=>{bar.classList.remove('show');fill.style.width='0%';document.getElementById('regbtn').textContent='등록 완료';document.getElementById('regbtn').disabled=false;showToast('⚠️ 저장 오류. 다시 시도해주세요.');});
+}
+function cancelUp(){document.getElementById('mform').classList.remove('show');document.getElementById('finput').value='';document.getElementById('upz').style.opacity='1';document.getElementById('upz').style.pointerEvents='auto';pend=[];pidx=0;}
+
+async function dlFile(id,btn){
+  if(btn){btn.disabled=true;btn.textContent='준비 중...';}
+  try{const blob=await dbGet(id);if(!blob){showToast('파일 데이터를 찾을 수 없습니다');if(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v8M5 7l3 4 3-4M2 14h12"/></svg>Download';}return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');const f=files.find(x=>x.id===id);a.href=url;a.download=f?.fn||id;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('⬇ '+(f?.kr||f?.fn||id)+' 다운로드');}catch(e){showToast('다운로드 오류');}
+  if(btn)setTimeout(()=>{btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v8M5 7l3 4 3-4M2 14h12"/></svg>Download';},800);
+}
+async function delFile(id){const f=files.find(x=>x.id===id);if(!f)return;if(!confirm((f.kr||f.fn)+'을(를) 삭제하시겠습니까?'))return;await dbDel(id);files=files.filter(x=>x.id!==id);saveMeta();renderAll();showToast('삭제되었습니다');}
+function copyURL(){navigator.clipboard.writeText('https://kyc.imbank.co.kr/documents').then(()=>showToast('포털 URL이 복사되었습니다'));}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+document.getElementById('upz').addEventListener('dragover',e=>{e.preventDefault();e.currentTarget.classList.add('dov');});
+document.getElementById('upz').addEventListener('dragleave',e=>{e.currentTarget.classList.remove('dov');});
+document.getElementById('upz').addEventListener('drop',e=>{e.preventDefault();e.currentTarget.classList.remove('dov');if(e.dataTransfer.files.length){pend=Array.from(e.dataTransfer.files);pidx=0;showMeta(pend[0]);}});
+document.getElementById('af-upz').addEventListener('dragover',e=>{e.preventDefault();e.currentTarget.classList.add('dov');});
+document.getElementById('af-upz').addEventListener('dragleave',e=>{e.currentTarget.classList.remove('dov');});
+document.getElementById('af-upz').addEventListener('drop',e=>{e.preventDefault();e.currentTarget.classList.remove('dov');const fi=document.getElementById('af-input');if(e.dataTransfer.files.length){const dt=new DataTransfer();dt.items.add(e.dataTransfer.files[0]);fi.files=dt.files;handleAF(fi);}});
+
+/* ── INIT ── */
+openDB().then(()=>{loadMeta();loadDB();renderAll();renderDB();updUI();initAPIKey();updatePubHeader();})
+.catch(()=>{loadMeta();loadDB();renderAll();renderDB();updUI();initAPIKey();updatePubHeader();showToast('⚠️ IndexedDB 초기화 실패 — 일부 기능 제한');});
+</script>
+</body>
+</html>
