@@ -571,10 +571,33 @@ iM Bank 마스터 DB:
 4. 질문 누락 금지 — 양식의 모든 입력 필드를 반드시 포함
 5. 체크박스/선택지도 항목으로 포함
 6. 서명/날짜 필드도 포함 (status: empty 또는 review)
-7. 항목 수 제한 없음 — 양식에 있는 만큼 전부 추출`,messages:[{role:'user',content:msgContent}]})});
+7. 항목 수 제한 없음 — 양식에 있는 만큼 전부 추출
+8. 반드시 완전한 JSON 배열로 끝낼 것 (마지막 ] 포함)
+9. 응답은 JSON만. 설명 텍스트 절대 없음`,messages:[{role:'user',content:msgContent}]})});
       clearTimeout(timer);if(!res.ok)throw new Error(`API 오류 ${res.status}`);
       const data=await res.json();const raw=data.content?.find(c=>c.type==='text')?.text||'[]';
-      let items=[];try{items=JSON.parse(raw.replace(/```json|```/g,'').trim())}catch{items=[{question:'파싱 오류',answer:'다시 시도해주세요.',status:'empty',note:''}]}
+      let items=[];
+      try{
+        const cleaned=raw.replace(/```json|```/g,'').trim();
+        // 완전한 JSON 파싱 시도
+        items=JSON.parse(cleaned);
+      }catch(e1){
+        try{
+          // 잘린 JSON 복구 시도 - 마지막 완전한 객체까지만 파싱
+          const raw2=raw.replace(/```json|```/g,'').trim();
+          const lastBrace=raw2.lastIndexOf('}');
+          if(lastBrace>0){
+            const fixed=raw2.substring(0,lastBrace+1).replace(/,\s*$/,'')+']';
+            const startBracket=fixed.indexOf('[');
+            if(startBracket>=0){
+              items=JSON.parse(fixed.substring(startBracket));
+            }
+          }
+          if(!items.length) throw new Error('복구 실패');
+        }catch(e2){
+          items=[{question:'파싱 오류 — 다시 시도해주세요',answer:'응답 형식 오류',status:'empty',note:'API 응답이 올바른 JSON 형식이 아닙니다. 재시도해주세요.'}];
+        }
+      }
       afAbort=null;window._afLastUploadedFile=file;renderAFResult(items,file.name);document.getElementById('af-status').innerHTML='';document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';
     }catch(err){clearTimeout(timer);if(err.name==='AbortError')return;document.getElementById('af-status').innerHTML=`<div style="background:var(--rdb);border:1px solid #f5c6c2;border-radius:10px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem"><div><div style="font-size:13px;font-weight:500;color:var(--rd)">⚠️ 오류</div><div style="font-size:12px;color:var(--rd)">${err.message}</div></div><button onclick="resetAF()" style="padding:7px 16px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer">다시 업로드</button></div>`;document.getElementById('af-upz').style.opacity='1';document.getElementById('af-upz').style.pointerEvents='auto';afAbort=null;}
   }
