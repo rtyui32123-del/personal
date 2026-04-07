@@ -559,7 +559,7 @@ function handleAF(inp){
       const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:afAbort.signal,headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:`당신은 iM Bank 외화자금부 KYC 전문가입니다. 상대방 KYC 양식의 모든 질문을 빠짐없이 추출하고 마스터 DB 기반으로 자동 작성합니다.
 
 iM Bank 마스터 DB:
-\${dbText}
+${dbText}
 
 핵심 규칙:
 1. JSON 배열만 반환. 다른 텍스트 절대 없이.
